@@ -8,22 +8,29 @@ import { loginUser } from "../api/auth";
 const Login = () => {
   const navigate = useNavigate();
 
+  // Validation schema for the login form
   const loginSchema = Yup.object().shape({
     email: Yup.string().email("Invalid email").required("Required"),
-    password: Yup.string().min(6, "Too Short!").required("Required"),
+    password: Yup.string().min(6, "Too short!").required("Required"),
   });
 
+  // Function to handle form submission
   const handleSubmit = async (values) => {
     try {
-      const response = await loginUser(values);
-      console.log("Login successful:", response.data);
-      navigate("/dashboard"); // Redirect to dashboard on successful login
+      const response = await loginUser(values); // Call the API
+      console.log("Login successful:", response.data); // Debug API response
+
+      // Set session or token if needed
+      sessionStorage.setItem("isAuthenticated", true);
+
+      // Redirect to dashboard
+      navigate("/dashboard");
     } catch (error) {
       console.error(
         "Login failed:",
         error.response?.data?.message || error.message
       );
-      alert("Login failed. Please check your credentials.");
+      alert("Invalid credentials. Please try again.");
     }
   };
 
@@ -57,10 +64,9 @@ const Login = () => {
         </Formik>
 
         <p className="text-sm text-center text-gray-600">
-          Dont have an account?
+          Not a user?{" "}
           <a href="/signup" className="text-blue-500 hover:underline">
-            {" "}
-            Sign up
+            Sign up here
           </a>
         </p>
       </div>

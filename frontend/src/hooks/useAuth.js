@@ -1,31 +1,25 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { loginUser, logoutUser } from "../api/auth";
+import { useState } from "react";
+import { loginUser } from "../api/auth";
 
 export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    sessionStorage.getItem("isAuthenticated") === "true"
+  );
 
-  useEffect(() => {
-    // Example check if user is authenticated
-    setIsAuthenticated(!!sessionStorage.getItem("userId"));
-  }, []);
-
-  const login = async (values) => {
+  const login = async (values, navigate) => {
     try {
-      await loginUser(values);
+      await loginUser(values); // Call the API
       setIsAuthenticated(true);
-      sessionStorage.setItem("userId", values.email); // Simple session storage example
+      sessionStorage.setItem("isAuthenticated", true); // Persist login state
       navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
     }
   };
 
-  const logout = async () => {
-    await logoutUser();
+  const logout = (navigate) => {
     setIsAuthenticated(false);
-    sessionStorage.removeItem("userId");
+    sessionStorage.removeItem("isAuthenticated");
     navigate("/login");
   };
 
