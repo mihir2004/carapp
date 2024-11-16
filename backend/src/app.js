@@ -6,6 +6,7 @@ import connectDB from "./config/dbConfig.js";
 import authRoutes from "./routes/authRoute.js";
 
 dotenv.config();
+
 const app = express();
 
 // Connect to MongoDB
@@ -21,11 +22,12 @@ app.use(
     credentials: true, // Allow cookies and authentication headers
   })
 );
+const newString = process.env.SESSION_SECRET;
 
 // Session setup
 app.use(
   session({
-    secret: process.env.SESSION_SECRET,
+    secret: newString,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: false },
